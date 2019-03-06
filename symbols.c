@@ -11,43 +11,21 @@
  
 **************************************************************************/
 
+#include <stdlib.h>
 #include <string.h>
 #include "symbols.h"
 
-#define INITIAL_SIZE 10 /* initial size of the symbol table */
 
-/* defining a symbol */
-typedef struct{
-    char* name; /* the name of the symbol */
-    int value; /* value of the symbol */
-    bool isInstruction; /* boolean to determine if the symbol represents an instruction statement */
-    bool isExternal; /* boolean to determine whether the symbol is external or not */
-} symbol;
-
-/* defining the symbol table struct */
-typedef struct{
-    symbol* table; /* dynamic array of symbols */
-    int size; /* current size of the symbol table (amount of symbols) */
-} symbolTable;
-
-
-
-/**************************************************************************
-    
-    This function creates an empty symbol table in size of INITIAL_SIZE
-    and returns a pointer to that table.
-
-**************************************************************************/
 SymbolTable* createTable(){
     SymbolTable* symbol_table = (SymbolTable*)malloc(sizeof(SymbolTable));
-    symbol_table->table = (Symbol*)malloc(sizeof(Symbol) * INITIAL_SIZE);
+    symbol_table->table = (Symbol**)malloc(sizeof(Symbol*) * INITIAL_SIZE);
     symbol_table->current_size = 0;
     symbol_table->size = INITIAL_SIZE;
     return symbol_table;
 }
 
 
-symbol* createSymbol(char* name, int value, bool instruction, bool external){
+Symbol* createSymbol(char* name, int value, bool instruction, bool external){
     Symbol* symbol = (Symbol*)malloc(sizeof(Symbol));
     symbol->name = (char*)malloc(strlen(name) + 1);
     strcpy(symbol->name, name);
@@ -58,14 +36,24 @@ symbol* createSymbol(char* name, int value, bool instruction, bool external){
 }
 
 
-
 void addSymbol(Symbol* symbol, SymbolTable* symbol_table){
     if(symbol_table->current_size == symbol_table->size){
-        
+        symbol_table->table = (Symbol**)realloc(symbol_table->table, 
+                                            symbol_table->size * ENLARGEMENT_FACTOR * sizeof(Symbol*)); 
+        symbol_table->size = symbol_table->size * ENLARGEMENT_FACTOR;
     }
+    symbol_table->table[symbol_table->current_size] = symbol;
+    symbol_table->current_size++;
 
 }
 
-
-
-
+int getValue(char* symbol_name, SymbolTable* symbol_table){
+    int i;
+    Symbol* current;
+    for(i = 0; i < symbol_table->current_size; i++){
+        current = symbol_table->table[i];
+        if(strcmp(current->name, symbol_name) == 0) /* symbol found */
+            return current->value;
+    }
+    return NO_SUCH_SYMBOL;
+}
