@@ -12,6 +12,11 @@
 
 **************************************************************************/
 
+
+#ifndef SYMBOLS_H_
+#define SYMBOLS_H_
+
+
 #include "support.h"
 
 #define INITIAL_SIZE 10 /* initial size of the symbol table */
@@ -91,4 +96,6 @@ void addSymbol(Symbol* symnol, SymbolTable* symbol_table);
 
 *************************************************************************/
 int getValue(char* symbol_name, SymbolTable* symbol_table);
+
+#endif
 
