@@ -17,14 +17,19 @@
 #ifndef SUPPORT_H_
 #define SUPPORT_H_
 
+
 #define MAX_LINE_LENGTH 80 /* defining the maximum length of a single line in the input */
+#define MAX_LABEL_LENGTH 31
 #define EOF_REACHED "eof\n" /* a string that is used as a return value when EOF reached */
 
 
 
 typedef enum{false, true} bool; /* defining the boolean data type */
 
-
+typedef struct{
+    FILE* file;
+    char* name;
+} NamedFile;
 
 /**************************************************************************
     

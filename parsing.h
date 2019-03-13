@@ -27,4 +27,8 @@ bool isValidInstruction(char*, InstructionGroup*);
 char* getInstructionName(char*);
 char* getOperand(int, char*);
 bool isRegister(char*);
+bool isValidRegister(char*);
+AddressingMode getOperandsAddressingMode(char*);
+bool isValidLabel(char*);
+
 #endif

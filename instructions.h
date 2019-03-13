@@ -26,4 +26,5 @@ InstructionGroup* allInstructions();
 
 bool instructionExists(char*, InstructionGroup*);
 Instruction* getInstruction(char* name, InstructionGroup*);
+int getAmountOfOperands(char* name, InstructionGroup*);
 #endif

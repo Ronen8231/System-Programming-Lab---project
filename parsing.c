@@ -3,17 +3,47 @@
 #include <string.h>
 #include <stdlib.h>
 #include "instructions.h"
+#include "parsing.h"
+#include <ctype.h>
 
-/*
-bool isLegal(char* line){
-    if(strlen(line) > 80)
-        return false;
-    if(isNumber(line[0])
-        return false;
-}*/
+bool isValidLabel(char* label){
+    int i;
+    int len = strlen(label);
+    if(len < 1 || len > MAX_LABEL_LENGTH) return false;
+    for(i = 0; i < len; i++){
+        if(i==0)
+            if(!isalpha(label[i]))
+                return false;
+        else
+            if(!isalnum(label[i]))
+                return false;
+    }
+    return true;
+}
+
+
+/* returns none if not valid */
+AddressingMode getOperandsAddressingMode(char* operand){
+    if(isValidRegister(operand))
+        return Register;
+    if(isValidLabel(operand))
+        return Direct;
+    if(atoi(operand) || strcmp(operand, "0") == 0 || strcmp(operand, "-0") == 0)
+        return Immediate;
+    return None;
+}
+
+
 bool isRegister(char* op){
     return op[0] == '@';
 }
+
+bool isValidRegister(char* op){
+    if(strlen(op) == 3 && op[0] == '@' && op[1] == 'r' && atoi(&(op[2])) >= 0 && atoi(&(op[2])) <= 7 )
+        return true;
+    return false;   
+}
+
 bool isLabeled(char* line){
     int i;
     for(i = 0; i < strlen(line); i++){

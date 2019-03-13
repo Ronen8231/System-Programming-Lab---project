@@ -3,6 +3,16 @@
 #include <string.h>
 #include "support.h"
 
+
+int getAmountOfOperands(char* inst_name, InstructionGroup* instructions){
+    Instruction* instruction = getInstruction(inst_name, instructions);
+    int amount = 0;
+    if(instruction->operand1[0] != None) amount++;
+    if(instruction->operand2[0] != None) amount++;
+    return amount;
+}
+
+
 Instruction* getInstruction(char* name, InstructionGroup* instructions){
     Instruction* current;
     int i;

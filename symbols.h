@@ -29,6 +29,7 @@ typedef struct{
     int value; /* value of the symbol */
     bool is_instruction; /* boolean to determine if the symbol represents an instruction statement */
     bool is_external; /* boolean to determine whether the symbol is external or not */
+    bool is_entry;
 } Symbol;
 
 /* defining the symbol table struct */

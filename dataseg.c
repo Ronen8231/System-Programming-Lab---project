@@ -4,7 +4,7 @@
 
 
 
-DataSegmentEntry* getLastEntry(DataSegment* dataseg){
+DataSegmentEntry* getLastDataEntry(DataSegment* dataseg){
     DataSegmentEntry* current;
     if(dataseg->first == NULL)
         return NULL;
@@ -19,8 +19,8 @@ void appendData(DataSegment* dataseg, int address, int data){
     new_entry->address = address;
     new_entry->data = data;
     new_entry->next = NULL;
-    if(getLastEntry(dataseg) == NULL)
+    if(getLastDataEntry(dataseg) == NULL)
         dataseg->first = new_entry;
     else
-        getLastEntry(dataseg)->next = new_entry;
+        getLastDataEntry(dataseg)->next = new_entry;
 }

@@ -52,12 +52,9 @@ int calculateInstructionSize(char* line, InstructionGroup* instructions){
     char* op1;
     char* op2;
     int amount_of_operands = 0;
-    Instruction* instruction;
-   
+    int ret;
     instruction_name = getInstructionName(line);
-    instruction = getInstruction(instruction_name, instructions);
-    if(instruction->operand1[0] != None) amount_of_operands++; 
-    if(instruction->operand2[0] != None) amount_of_operands++; 
+    amount_of_operands = getAmountOfOperands(instruction_name, instructions);
     if(amount_of_operands == 0)
         return 1; /* only one word of data needed */
     if(amount_of_operands == 1)
@@ -66,23 +63,32 @@ int calculateInstructionSize(char* line, InstructionGroup* instructions){
     op2 = getOperand(2, line);
     if(amount_of_operands == 2){
         if(isRegister(op1) && isRegister(op2))
-            return 2;
-        return 3;
+            ret =  2;
+        else
+            ret =  3;
+        free(op1);
+        free(op2);
+        return ret;
     }
+    
     return -1; /* impossible in valid code */
 }
 
-void updateDataSeg(DataSegment* dataseg, int start_address){
-    DataSegmentEntry* current = dataseg->first;
-    while(current != NULL){
-        current->address += start_address;
-        current = current->next;
+
+void updateSymbolTable(SymbolTable* symbol_table, int start_address){
+    int i, size;
+    Symbol* current;
+    size = symbol_table->current_size;
+    for(i = 0; i < size; i++){
+        current =  symbol_table->table[i];
+        if( (! current->is_instruction) && (! current->is_external) )
+            current->value += start_address;
     }
 }
-
-void first_pass(FILE* code_file, SymbolTable* symbol_table, DataSegment* dataseg, InstructionGroup* instructions){
+void first_pass(NamedFile* code_file, SymbolTable* symbol_table, DataSegment* dataseg, InstructionGroup* instructions){
     int ic, dc;
     int size;
+    int line_number = 0;
     bool symbolDefined;
    /* bool errorsFound; */
     char* line;
@@ -90,7 +96,8 @@ void first_pass(FILE* code_file, SymbolTable* symbol_table, DataSegment* dataseg
     Symbol* curr_label;
     ic=100;
     dc=0;
-    while( strcmp((line = read_line(code_file)), EOF_REACHED) != 0 ){
+    while( strcmp((line = read_line(code_file->file)), EOF_REACHED) != 0 ){
+        line_number++;
         size = 0;
         if(isLabeled(line))
             symbolDefined = true;
@@ -140,12 +147,13 @@ void first_pass(FILE* code_file, SymbolTable* symbol_table, DataSegment* dataseg
             }
         
             if(!isValidInstruction(line, instructions)){
-                fprintf(stderr, "");
+                error(UNKNOWN_INSTRUCTION, code_file->name, line_number);
+                continue;
             }
         
             size = calculateInstructionSize(line, instructions);
             ic += size;        
         }
     }
-    updateDataSeg(dataseg, ic);
+    updateSymbolTable(symbol_table, ic); 
 }

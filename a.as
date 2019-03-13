@@ -4,10 +4,10 @@ LOOP: jmp L1
  bne LOOP
  sub @r1 , @r4
  bne END
-bibi @r4
 L1: inc K
  bne LOOP
 END: stop
 STR: .string "abcdef"
 LENGTH: .data 6,-9,15
 K: .data 22
+bibi

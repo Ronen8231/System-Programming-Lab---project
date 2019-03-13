@@ -2,6 +2,9 @@
 
 
 */
+
+/*TODO: get rid of addresses in entries, thay are unnecessary */
+
 #ifndef DATASEG_H_
 #define DATASEG_H_
 struct DataSegmentEntry { 
@@ -17,6 +20,6 @@ typedef struct {
         DataSegmentEntry* first;
 } DataSegment;
 
-DataSegmentEntry* getLastEntry(DataSegment*);
+DataSegmentEntry* getLastDataEntry(DataSegment*);
 void appendData(DataSegment*, int, int);
 #endif
