@@ -30,5 +30,5 @@ bool isRegister(char*);
 bool isValidRegister(char*);
 AddressingMode getOperandsAddressingMode(char*);
 bool isValidLabel(char*);
-
+int getRegisterNumber(char*);
 #endif

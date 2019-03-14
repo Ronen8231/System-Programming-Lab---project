@@ -2,7 +2,15 @@
 #include "dataseg.h"
 #include <stdio.h>
 
-
+int getDataSegSize(DataSegment* dataseg){
+    int size = 0;
+    DataSegmentEntry* entry = dataseg->first;
+    while(entry){
+        size++;
+        entry = entry->next;
+    }
+    return size;
+}
 
 DataSegmentEntry* getLastDataEntry(DataSegment* dataseg){
     DataSegmentEntry* current;
@@ -14,9 +22,8 @@ DataSegmentEntry* getLastDataEntry(DataSegment* dataseg){
 
 
 
-void appendData(DataSegment* dataseg, int address, int data){
+void appendData(DataSegment* dataseg, int data){
     DataSegmentEntry* new_entry = (DataSegmentEntry*)malloc(sizeof(DataSegmentEntry));
-    new_entry->address = address;
     new_entry->data = data;
     new_entry->next = NULL;
     if(getLastDataEntry(dataseg) == NULL)

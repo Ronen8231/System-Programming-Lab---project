@@ -17,7 +17,7 @@
 #ifndef SUPPORT_H_
 #define SUPPORT_H_
 
-
+#define BASE64_LINE_SIZE 2 /* each line in the object file consists of 2 chars */
 #define MAX_LINE_LENGTH 80 /* defining the maximum length of a single line in the input */
 #define MAX_LABEL_LENGTH 31
 #define EOF_REACHED "eof\n" /* a string that is used as a return value when EOF reached */
@@ -62,5 +62,9 @@ char* read_line(FILE* file);
 
 **************************************************************************/
 void replace_tabs_with_spaces(char *str);
+
+char* wordToBase64(int);
+
+char* itoa(int);
 
 #endif

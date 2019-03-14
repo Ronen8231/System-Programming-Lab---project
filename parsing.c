@@ -6,17 +6,24 @@
 #include "parsing.h"
 #include <ctype.h>
 
+/* assuming valid register */
+int getRegisterNumber(char* reg){
+    return atoi(&reg[2]);
+}
+
 bool isValidLabel(char* label){
     int i;
     int len = strlen(label);
     if(len < 1 || len > MAX_LABEL_LENGTH) return false;
     for(i = 0; i < len; i++){
-        if(i==0)
+        if(i==0){
             if(!isalpha(label[i]))
                 return false;
-        else
+        }
+        else{
             if(!isalnum(label[i]))
                 return false;
+        }
     }
     return true;
 }

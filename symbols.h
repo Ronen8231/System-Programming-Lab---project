@@ -63,11 +63,13 @@ SymbolTable* createTable();
                                 represents an instruction statement
                 external -      boolean to determine whether the symbol
                                 is external or not.
+                entry -         boolean to determine whether the symbol
+                                was declared in an entry statement or not.
 
     Returns:    A pointer to the symbol that was created.
 
 **************************************************************************/
-Symbol* createSymbol(char* name, int value, bool instruction, bool external);
+Symbol* createSymbol(char* name, int value, bool instruction, bool external, bool entry);
 
 
 /**************************************************************************
@@ -97,6 +99,8 @@ void addSymbol(Symbol* symnol, SymbolTable* symbol_table);
 
 *************************************************************************/
 int getValue(char* symbol_name, SymbolTable* symbol_table);
+
+bool isExternal(char*, SymbolTable*);
 
 #endif
 

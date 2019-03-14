@@ -16,6 +16,17 @@
 #include "symbols.h"
 
 
+bool isExternal(char* label, SymbolTable* symbol_table){
+    int i;
+    Symbol* current;
+    for(i = 0; i < symbol_table->current_size; i++){
+        current = symbol_table->table[i];
+        if(strcmp(current->name, label) == 0)
+            return current->is_external;
+    }
+    return false; /* unreachable code if label is indeed in symbol table */
+}
+
 SymbolTable* createTable(){
     SymbolTable* symbol_table = (SymbolTable*)malloc(sizeof(SymbolTable));
     symbol_table->table = (Symbol**)malloc(sizeof(Symbol*) * INITIAL_SIZE);
@@ -25,13 +36,14 @@ SymbolTable* createTable(){
 }
 
 
-Symbol* createSymbol(char* name, int value, bool instruction, bool external){
+Symbol* createSymbol(char* name, int value, bool instruction, bool external, bool entry){
     Symbol* symbol = (Symbol*)malloc(sizeof(Symbol));
     symbol->name = (char*)malloc(strlen(name) + 1);
     strcpy(symbol->name, name);
     symbol->value = value;
     symbol->is_instruction = instruction;
     symbol->is_external = external;
+    symbol->is_entry = entry;
     return symbol;
 }
 

@@ -18,7 +18,7 @@ void addDataToDataSeg(char* line, DataSegment* dataseg, int* dc){
     curr_data = strtok(all_data, ",");
     
     while(curr_data != NULL){
-        appendData(dataseg, *dc, atoi(curr_data));
+        appendData(dataseg, atoi(curr_data));
         (*dc)++;
         curr_data = strtok(NULL, ",");
     }
@@ -38,11 +38,11 @@ void addStringToDataSeg(char* line, DataSegment* dataseg, int* dc){
     for(i = 0;string[i] != '\"' ;i++);
     i++;
     while(string[i] != '\"'){
-        appendData(dataseg, *dc, string[i]);
+        appendData(dataseg, string[i]);
         (*dc)++;
         i++;
     }
-    appendData(dataseg, *dc, 0); /* null terminator */
+    appendData(dataseg, 0); /* null terminator */
     (*dc)++;
     free(code_line);
 }
@@ -109,8 +109,7 @@ void first_pass(NamedFile* code_file, SymbolTable* symbol_table, DataSegment* da
                 label = getLabel(line);
                 
                 /* not an instruction, not external */
-                curr_label = createSymbol(label, dc, false, false); 
-                
+                curr_label = createSymbol(label, dc, false, false, false);                 
                 addSymbol(curr_label, symbol_table);
                 free(label);
             }
@@ -128,7 +127,7 @@ void first_pass(NamedFile* code_file, SymbolTable* symbol_table, DataSegment* da
         else if(isExternStatement(line)){
             label = getExternEntryLabel(line);
             /* external symbol */
-            curr_label = createSymbol(label, 0, false, true);
+            curr_label = createSymbol(label, 0, false, true, false);
             addSymbol(curr_label, symbol_table);
             free(label);
             continue;
@@ -141,7 +140,7 @@ void first_pass(NamedFile* code_file, SymbolTable* symbol_table, DataSegment* da
             if(symbolDefined){
                 label = getLabel(line);
                 /* not an instruction, not external */
-                curr_label = createSymbol(label, ic, true, false); 
+                curr_label = createSymbol(label, ic, true, false, false); 
                 addSymbol(curr_label, symbol_table);
                 free(label);
             }

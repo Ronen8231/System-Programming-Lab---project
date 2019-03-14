@@ -8,6 +8,6 @@
 #include "symbols.h"
 #include "instructions.h"
 
-void second_pass(NamedFile*, SymbolTable*, InstructionGroup*);
+void second_pass(NamedFile*, SymbolTable*, InstructionGroup*, DataSegment*);
 
 #endif 

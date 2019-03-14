@@ -8,7 +8,6 @@
 #ifndef DATASEG_H_
 #define DATASEG_H_
 struct DataSegmentEntry { 
-    int address;
     int data;/* a memory word is 12 bits, meaning we can use an int to store the data */
     struct DataSegmentEntry* next;
 };
@@ -21,5 +20,7 @@ typedef struct {
 } DataSegment;
 
 DataSegmentEntry* getLastDataEntry(DataSegment*);
-void appendData(DataSegment*, int, int);
+void appendData(DataSegment*, int);
+int getDataSegSize(DataSegment*);
+
 #endif
