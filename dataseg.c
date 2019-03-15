@@ -2,6 +2,8 @@
 #include "dataseg.h"
 #include <stdio.h>
 
+
+/* returns the size of the data segment */
 int getDataSegSize(DataSegment* dataseg){
     int size = 0;
     DataSegmentEntry* entry = dataseg->first;

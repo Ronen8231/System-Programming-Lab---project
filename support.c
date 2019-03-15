@@ -17,7 +17,7 @@
 #include "memory_words.h"
 
 
-
+/* reverses the string s */
 void reverse(char* s){
     int i, j;
     char c;
@@ -29,7 +29,7 @@ void reverse(char* s){
     }
 }
 
-
+/* count the digits of a number */
 int countDigits(int num){
     int count = 0;
     while(num!=0){

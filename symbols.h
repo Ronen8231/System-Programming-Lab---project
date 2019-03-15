@@ -102,5 +102,6 @@ int getValue(char* symbol_name, SymbolTable* symbol_table);
 
 bool isExternal(char*, SymbolTable*);
 
+Symbol* getSymbol(char*, SymbolTable*);
 #endif
 

@@ -16,15 +16,23 @@
 #include "symbols.h"
 
 
-bool isExternal(char* label, SymbolTable* symbol_table){
+Symbol* getSymbol(char* name, SymbolTable* symbol_table){
     int i;
+    Symbol* symbol = NULL;
     Symbol* current;
     for(i = 0; i < symbol_table->current_size; i++){
         current = symbol_table->table[i];
-        if(strcmp(current->name, label) == 0)
-            return current->is_external;
+        if(strcmp(current->name, name) == 0){
+            symbol = current;
+            break;
+        }
     }
-    return false; /* unreachable code if label is indeed in symbol table */
+    return symbol;
+}
+
+bool isExternal(char* label, SymbolTable* symbol_table){
+    Symbol* symbol = getSymbol(label, symbol_table);
+    return symbol->is_external;
 }
 
 SymbolTable* createTable(){

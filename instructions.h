@@ -18,6 +18,7 @@ typedef struct {
     AddressingMode operand2[3];
 } Instruction;
 
+/* a struct that keeps an instruction group; implemented with a linked list */
 typedef struct{
     Instruction* all_instructions;
 } InstructionGroup;

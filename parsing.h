@@ -31,4 +31,6 @@ bool isValidRegister(char*);
 AddressingMode getOperandsAddressingMode(char*);
 bool isValidLabel(char*);
 int getRegisterNumber(char*);
+bool isEmptyLine(char*);
+int countOperandsGiven(char*);
 #endif

@@ -6,7 +6,7 @@
 #ifndef  FIRSTPASS_H_
 #define FIRSTPASS_H_
 
-void first_pass(NamedFile*, SymbolTable*, DataSegment*, InstructionGroup*);
+bool first_pass(NamedFile*, SymbolTable*, DataSegment*, InstructionGroup*);
 int calculateInstructionSize(char*, InstructionGroup*);
 
 #endif

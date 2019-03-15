@@ -6,6 +6,42 @@
 #include "parsing.h"
 #include <ctype.h>
 
+
+/* count actual amount of operands given */
+int countOperandsGiven(char* line){
+    int no_of_operands = 0;
+    char* full_line = (char*)malloc(strlen(line) + 1);
+    bool labeled = isLabeled(line);
+    char* token;
+    strcpy(full_line, line);
+    replace_tabs_with_spaces(full_line);
+    token = strtok(full_line, " ,");
+    if(labeled)
+        token = strtok(NULL, " ,");
+    
+    token = strtok(NULL, " ,");
+    while(token){
+        no_of_operands++;
+        token = strtok(NULL, " ,");
+    }
+    free(full_line);
+    return no_of_operands;
+}
+
+
+/* returns true if the line is empty */
+bool isEmptyLine(char* line){
+    int i;
+    if(strlen(line) == 0)
+        return true;
+    for( i = 0; i < strlen(line); i++){
+        if(line[i] != ' ' && line[i] != '\t')
+            return false;
+    }
+    return true;
+}
+
+
 /* assuming valid register */
 int getRegisterNumber(char* reg){
     return atoi(&reg[2]);
@@ -52,69 +88,111 @@ bool isValidRegister(char* op){
 }
 
 bool isLabeled(char* line){
-    int i;
-    for(i = 0; i < strlen(line); i++){
-        if(line[i] == '"') /* we reached a declaration of a string, which might contain a colon */
-            return false;
-        if(line[i] == ':')
-            return true;
-    }
-    return false;
+    bool ret;
+    char* full_line;
+    char* token;
+    full_line = (char*)malloc(strlen(line) + 1);
+    strcpy(full_line, line);
+    replace_tabs_with_spaces(full_line);
+    token = strtok(full_line, " ");
+    if(token[strlen(token) - 1] == ':')
+        ret = true;
+    else ret = false;
+    free(full_line);
+    return ret;
 }
 
+/* assuming label exists in the line, label should be freed after use */
 char* getLabel(char* line){
     char* label;
+    char* token;
     char* code_line = (char*)malloc(strlen(line) + 1);
     strcpy(code_line, line);
-    label = strtok(code_line, ":");
+    token = strtok(code_line, ":");
+    label = (char*)malloc(strlen(token) + 1);
+    strcpy(label, token);
+    free(code_line);
     return label;
 }
 
+/* gets the first field of the code line; either
+    a statement(data, string etc) or an instruction */
+char* getStatementInstruction(char* line){
+    char* full_line;
+    char* token;
+    char* state_inst;
+    bool labeled = isLabeled(line);
+    full_line = (char*)malloc(strlen(line) + 1);
+    strcpy(full_line, line);
+    replace_tabs_with_spaces(full_line);
+    token = strtok(full_line, " ");
+    if(labeled)    
+        token = strtok(NULL, " ");
+    state_inst = (char*)malloc(strlen(token) + 1);
+    strcpy(state_inst, token);
+    free(full_line);
+    return state_inst;
+}
+
+
 bool isDataStatement(char* line){
-    if(strstr(line, ".data"))
-        return true;
-    return false;
+    bool ret;
+    char* statement = getStatementInstruction(line);
+    if(strcmp(statement, ".data") == 0)
+        ret = true;
+    else ret = false;
+    free(statement);
+    return ret;
 }
 
 bool isStringStatement(char* line){
-    if(strstr(line, ".string"))
-        return true;
-    return false;
+    bool ret;
+    char* statement = getStatementInstruction(line);
+    if(strcmp(statement, ".string") == 0)
+        ret = true;
+    else ret = false;
+    free(statement);
+    return ret;
 }
 
 bool isExternStatement(char* line){
-    if(strstr(line, ".extern"))
-        return true;
-    return false;
+    bool ret;
+    char* statement = getStatementInstruction(line);
+    if(strcmp(statement, ".extern") == 0)
+        ret = true;
+    else ret = false;
+    free(statement);
+    return ret;
 }
 
 bool isEntryStatement(char* line){
-    if(strstr(line, ".entry"))
-        return true;
-    return false;
+    bool ret;
+    char* statement = getStatementInstruction(line);
+    if(strcmp(statement, ".entry") == 0)
+        ret = true;
+    else ret = false;
+    free(statement);
+    return ret;
 }
 
-char* getExternEntryLabel(char* line){
-    char* label;
-    char* argument;
-    char* code;
-    char* code_line = (char*)malloc(strlen(line) + 1);
-    strcpy(code_line, line);
-    if(isEntryStatement(line)){
-        code = strstr(code_line, ".entry");
-        argument = strtok(code, ".entry");
-    }
-    else{
-        code = strstr(code_line, ".extern");
-        argument = strtok(code, ".extern");
-    }
-    
-    replace_tabs_with_spaces(argument); 
-    argument = strtok(argument, " ");
-    label = (char*) malloc (strlen(argument) + 1);
-    strcpy(label, argument);
 
-    free(code_line);
+/* get the label that comed after the extern/entry statement */
+char* getExternEntryLabel(char* line){
+    char* full_line;
+    char* token;
+    char* label;
+
+    full_line = (char*)malloc(strlen(line) + 1);
+    strcpy(full_line, line);
+    replace_tabs_with_spaces(full_line);
+
+    token = strtok(full_line, " ");
+    token = strtok(NULL, " ");
+    if(isLabeled(line))
+        token = strtok(full_line, " ");
+    label = (char*)malloc(strlen(token) + 1);
+    strcpy(label, token);
+    free(full_line);
     return label;
 }
 
@@ -152,63 +230,30 @@ bool isValidInstruction(char* line, InstructionGroup* instructions){
 }
 
 char* getOperand(int operand_num, char* line){
-    char* token = NULL;
-    char* final_operand;
-    int size = 0;
-    int i;
     char* full_line = (char*)malloc(strlen(line) + 1);
+    char* token;
+    int i;
+    bool labeled = isLabeled(line);
+    char* operand;
     strcpy(full_line, line);
-    
     replace_tabs_with_spaces(full_line);
-    
-    if(isLabeled(line)){
-        token = strtok(full_line, " "); /* label */
-        token = strtok(NULL, " "); /* instruction */
-    }
-    else
-        token = strtok(full_line, " "); /* instruction */
+    token = strtok(full_line, " ,");
+    if(labeled)
+        token = strtok(NULL, " ,");
 
-    token = strtok(NULL, " "); 
-    if(operand_num < 1 || operand_num > 2) /* impossible */
+    for(i = 0; i < operand_num; i++){
+        if(token == NULL){
+            free(full_line);
+            return NULL;
+        }
+        token = strtok(NULL, " ,");
+    }
+    if(token == NULL){
+        free(full_line);
         return NULL;
-    
-    for(i = 0; i < strlen(token) && token[i] != ','; i++, size++);
-        
-    if(operand_num == 1){
-        final_operand = (char*)malloc(size + 1);
-        memset(final_operand, 0, size + 1);
-        strncpy(final_operand, token, size);
     }
-
-    if(operand_num == 2){
-        if(i == strlen(token)){ /* comma isn't part of the token */
-            token = strtok(NULL, " ");
-            if(strlen(token) == 1) /* comma plus null terminator */
-                token = strtok(NULL, " ");
-            size = strlen(token);
-            if(token[0] == ',') size--;
-            final_operand = (char*)malloc(size + 1);
-            if(token[0] == ',') strcpy(final_operand, &(token[1]));
-            else strcpy(final_operand, token);
-        }
-        else{
-            i += 1;
-            if(i == strlen(token)){
-                token = strtok(NULL, " ");
-                size = strlen(token);
-                final_operand = (char*)malloc(size + 1);
-                strcpy(final_operand, token);
-            }
-            else{
-                size = strlen(token) - i;
-                final_operand = (char*)malloc(size + 1);
-                memset(final_operand, 0, size + 1);
-                strncpy(final_operand, &(token[i]), size);
-            }
-
-        }
-    }
- 
+    operand = (char*)malloc(strlen(token) + 1);
+    strcpy(operand, token);
     free(full_line);
-    return final_operand;
+    return operand;
 }

@@ -1,4 +1,22 @@
 #include "memory_words.h"
+#include "instructions.h"
+#include <stdlib.h>
+
+/* creating an instruction word */
+InstructionWord* createInstructionWord(AddressingMode first, int opcode, AddressingMode second, ARE are){
+    InstructionWord* word = (InstructionWord*) malloc(sizeof(InstructionWord));
+    word->first_addressing_mode = first;
+    word->opcode = opcode;
+    word->second_addressing_mode = second;
+    word->ARE = are;
+    return word;
+}
+
+
+
+
+/* calculating the integer value of an instruction word/ a register word */
+
 
 int instructionWordToInt(InstructionWord* instruction_word){
     int final_value = 0;
